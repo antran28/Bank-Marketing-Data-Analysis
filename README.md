@@ -29,5 +29,5 @@ Language used: R
 
 Given these factors, it is recommended to concentrate on those consumer groups that are potentially more promising.The concentration of the bank’s efforts will effectively distribute the company’s resources to the main factor - the bank’s contact time with the client - it affects most of all on conversion.
 
-#### P/s: Hope this repository will help you to assess my coding skills or will be just fun for you to play with 😊
+### 🌻 P/s: Hope this repository will help you to assess my coding skills or will be just fun for you to play with 😊
 
