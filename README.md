@@ -17,7 +17,7 @@ Language used: R
 
 ## ✨ View my code here
 
-https://rpubs.com/antran28/934326
+[R Markedown](https://rpubs.com/antran28/934326)
 
 ## ✨ Result summary
 
