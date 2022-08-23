@@ -1,17 +1,31 @@
-# Bank-Marketing-Data-Analysis-Project
-Hi there!
+# 💵 Bank Marketing Campaign Prediction 💵
 
-My name is An Tran, I study Master of Business Analytics at UTS. I'm intensively learning to code and interested in data analytics, this repository will show some data analysis projects that I have done during my course of study or practicing my coding skills.
+## ✨ Introduction
 
-During my study, I have learnt, practiced and successfully applied the following skills:
-1. Data importing
-2. Data cleaning
-3. Exploratory data analysis
-4. Data waggling 
-5. Data visuallization
+The following project focus on the analysis of a dataset 'Bank Marketing' which contains data about the direct marketing campaigns of a Portuguese banking institution. The goal of this project is to find ways to look for future strategies in order to improve future marketing campaigns for the bank.
 
-The programming languages that I use including: SQL, R and Python. In this project I will use R language for my analysis.
+View source of data: [here](https://archive.ics.uci.edu/ml/datasets/bank+marketing)
 
-The data is related with direct marketing campaigns of a Portuguese banking institution. The goal of this project is to find ways to look for future strategies in order to improve future marketing campaigns for the bank.
+The project is structured as follows:
 
-Hope this repository will help you to assess my coding skills or will be just fun for you to play with.
+- Data Cleaning + Feature Engineering
+- Exploratory Data Analysis
+- Data Visualisation
+- Logistic Regression Model
+
+Language used: R
+
+## ✨ View my code here
+
+## ✨ Result summary
+
+- Potentially similar micro-targeting will increase the overall effectiveness of the entire marketing company.
+- Take into account the time of the company (May is the most effective)
+- Increase the time of contact with customers (perhaps in a different way formulating the goal of the company). It is possible to use other means of communication.
+- Focus on specific categories. The model shows that students and senior citizens respond better to proposal.
+- It is imperative to form target groups based on socio-economic categories. Age, income level (not always high), profession can accurately determine the marketing profile of a potential client.
+
+Given these factors, it is recommended to concentrate on those consumer groups that are potentially more promising.The concentration of the bank’s efforts will effectively distribute the company’s resources to the main factor - the bank’s contact time with the client - it affects most of all on conversion.
+
+#### P/s: Hope this repository will help you to assess my coding skills or will be just fun for you to play with 😊
+
