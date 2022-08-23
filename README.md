@@ -17,6 +17,8 @@ Language used: R
 
 ## ✨ View my code here
 
+https://rpubs.com/antran28/934326
+
 ## ✨ Result summary
 
 - Potentially similar micro-targeting will increase the overall effectiveness of the entire marketing company.
