@@ -29,7 +29,7 @@ Language used: R
 - Focus on specific categories. The model shows that students and senior citizens respond better to proposal.
 - It is imperative to form target groups based on socio-economic categories. Age, income level (not always high), profession can accurately determine the marketing profile of a potential client.
 
-Given these factors, it is recommended to concentrate on those consumer groups that are potentially more promising.The concentration of the bank’s efforts will effectively distribute the company’s resources to the main factor - the bank’s contact time with the client - it affects most of all on conversion.
+Given these factors, it is recommended to concentrate on those consumer groups that are potentially more promising.The concentration of the bank’s efforts will effectively distribute the company’s resources to the main factor - the bank’s contact time with the client - it affects most of all on conversion. 
 
 ### 🌻 P/s: Hope this repository will help you to assess my coding skills or will be just fun for you to play with 😊
 
