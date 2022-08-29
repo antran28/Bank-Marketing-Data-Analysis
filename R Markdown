@@ -1,0 +1,350 @@
+---
+title: "Bank Marketing Analyst R"
+author: "Thanh Thuy An Tran"
+date: "26/2/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Abstract: The data is related with direct marketing campaigns of a Portuguese banking institution. The marketing campaigns were based on phone calls. Often, more than one contact to the same client was required, in order to access if the product (bank term deposit) would be ('yes') or not ('no') subscribed
+
+1. Reading Data
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(readr)
+library(funModeling)
+df <- read.csv("~/Downloads/bank-additional-full-official.csv", sep=";")
+
+# View the dataset 
+View(df)
+head(df)
+tail(df)
+
+# Describe the dataset 
+names(df)
+class(df)
+dim(df)
+nrow(df)
+ncol(df)
+```
+2. Checking null values and missing values in the dataset:
+
+```{r}
+colSums(is.na(df))
+
+# There is no missing values in any column of the dataset. However, according to the data documentation, “unknown” value means NA therefore we will check the total number of NA values in the data:
+
+sum(df == "unknown")
+
+# There are 12,718 unknown values in the dataset. Next we will identify which variable has the highest number of missing value:
+
+df %>% 
+  summarise_all(list(~sum(. == "unknown"))) %>% 
+  gather(key = "variable", value = "nr_unknown") %>% 
+  arrange(-nr_unknown)
+
+# There are 6 variables that have missing values in the dataset.
+
+```
+
+3. Basic statistical calculations:
+
+```{r}
+summary(df)
+
+```
+
+4. Data processing and manipulation
+
+
+```{r}
+# In order to calculate the conversion rate, column "y" must be converted into integer. The column "y" has binary values "yes" and "no" (subscribed to a term deposit). I'm going to encode it into 1s and 0s.
+
+df <- df %>%
+  mutate(y=ifelse(y=="no", 0, 1))
+df$y <- as.integer(df$y)
+
+# Total number of conversions
+sum(df$y)
+
+# Total number of clients in the data
+nrow(df)
+
+# Conversion rate
+sum(df$y)/nrow(df)*100
+
+# The conversion rate of this dataset is 11.26%
+
+```
+
+5. Exploratory Data Analysis: In this section data analysis will be applied in order to identify the demographic target segmentation of bank marketing campaign. The demographic factors include: age, education, job, marital status.
+
+```{r}
+# Age: What is the age range of bank marketing target segment? What is the average age?
+
+mean(df$age)
+min(df$age)
+max(df$age)
+
+# Ages range from 17 to 98, the average is 40 years old.
+
+df %>% 
+  ggplot() +
+  aes(x = age) +
+  geom_bar() +
+  geom_vline(xintercept = c(30, 60), 
+             col = "red",
+             linetype = "dashed") +
+  facet_grid(y ~ .,
+             scales = "free_y") +
+  scale_x_continuous(breaks = seq(0, 100, 5))
+
+# From the graph, it is clear that bank is not interested in contacting older population after 60 years old.
+```
+```{r pressure, echo=FALSE}
+# Group clients into 6 age groups(18-30, 30-40, 40-50, 50-60, 60-70, >70)
+conversionsAgeGroup <- df %>%
+  group_by(AgeGroup=cut(age, breaks=seq(20, 70, by=10))) %>%
+  summarise(TotalCount=n(), NumberConversions=sum(y)) %>%
+  mutate(ConversionRate=NumberConversions/TotalCount*100)
+
+# Rename the 6th group
+conversionsAgeGroup$AgeGroup <- as.character(conversionsAgeGroup$AgeGroup)
+conversionsAgeGroup$AgeGroup[6] <- "70+"
+
+# Visualizing conversions by age group
+ggplot(data=conversionsAgeGroup, aes(x=AgeGroup, y=ConversionRate)) +
+  geom_bar(width=0.5, stat="identity", fill="darkblue") + 
+  labs(title="Conversion Rates by Age Group")
+```
+According to the chart, we can see that the over 60 age group have the highest conversion rate of taking a term deposit, however this group has received less attention and contact from the bank. It might happen because the older age group is hard to reach out in terms of telemarketing as they are not quite familiar with technology.
+
+```{r}
+#Job: What kind of jobs are represented by the clients pool?
+table(df$job)
+
+mytable <- table(df$job, df$y)
+tab <- as.data.frame(prop.table(mytable, 2))
+colnames(tab) <-  c("job", "y", "perc")
+
+ggplot(data = tab, aes(x = job, y = perc, fill = y)) + 
+  geom_bar(stat = 'identity', position = 'dodge', alpha = 2/3) + 
+    xlab("Job")+
+    ylab("Percent") + theme(axis.text.x=element_text(angle = 90, hjust = 0))
+```
+
+Surprisingly, students, retired people, admin and unemployed categories show the best relative frequencies of term deposit subscription. The demand for deposit subscription in blue-collar category is quite low.
+
+```{r}
+# Marital status: How is the marital status of potential clients?
+table(df$marital)
+
+mytable <- table(df$marital, df$y)
+tab <- as.data.frame(prop.table(mytable, 2))
+colnames(tab) <-  c("marital", "y", "perc")
+
+ggplot(data = tab, aes(x = marital, y = perc, fill = y)) + 
+  geom_bar(stat = 'identity', position = 'dodge', alpha = 2/3) + 
+    xlab("Marital")+
+    ylab("Percent")
+```
+
+From  the chart, it is clear that single client is likely to subscribe more often to term deposits than others groups (divorced and married).
+
+```{r}
+# Education: What is the education level of the target clients?
+
+table(df$education)
+
+mytable <- table(df$education, df$y)
+tab <- as.data.frame(prop.table(mytable, 2))
+colnames(tab) <-  c("education", "y", "perc")
+
+ggplot(data = tab, aes(x = education, y = perc, fill = y)) + 
+  geom_bar(stat = 'identity', position = 'dodge', alpha = 2/3) + 
+    xlab("Education") +
+    ylab("Percent") + theme(axis.text.x=element_text(angle = 90, hjust = 0))
+```
+
+It appears that there is a positive correlation between the number of years of education and the likelihood to subscribe to a term deposit. People with university degree is the group that have the highest likelihood of taking up term deposit. The three group that bank marketing should focus on is high school, professional course and university degree. Also, I would recommend limit marketing efforts on groups "basic.6y", "basic.9y" and unknown. For the illiterate group, as the number of clients are too low, I will not recommend forcus on this segment.
+
+```{r}
+# Month: Which month record the highest subscription of term deposit?
+
+mytable <- table(df$month, df$y)
+tab <- as.data.frame(prop.table(mytable, 2))
+colnames(tab) <-  c("month", "y", "perc")
+
+ggplot(data = tab, aes(x = month, y = perc, fill = y)) + 
+  geom_bar(stat = 'identity', position = 'dodge', alpha = 2/3) + 
+    xlab("Month")+
+    ylab("Percent")
+```
+First of all, we can notice that no contact has been made during January and February. The highest spike occurs during May, but it has the worst ratio of subscribers over persons contacted. Every month with a very low frequency of contact (March, September, October and December) shows very good results. December aside, there are enough observations to conclude this isn’t pure luck, so this feature will probably be very important in models.
+
+6. Bivariate analysis of social and economic attributes that affect bank marketing
+
+```{r}
+# Correlation analysis
+library(corrplot)
+df %>% 
+  select(emp.var.rate, cons.price.idx, cons.conf.idx, euribor3m, nr.employed) %>% 
+  cor() %>% 
+  corrplot(method = "number",
+           type = "upper",
+           tl.cex = 0.8,
+           tl.srt = 45,
+           tl.col = "black")
+
+```
+
+
+
+```{r}
+df %>%
+  ggplot() +
+  geom_point(aes(x=age, y=cons.price.idx, color=as.factor(y))) + ylab("consumer price index (monthly)") + labs(title="Consumer price index based on age group scatterplot")
+
+df %>%
+  ggplot() +
+  geom_point(aes(x=age, y=cons.conf.idx, color=as.factor(y))) + ylab("consumer confidence index (monthly)") + labs(title="Consumer confidence index based on age group scatterplot")
+```
+
+
+The Consumer Price Index is what is used to measure these average changes in prices over time that consumers pay for goods and services, as we can see from the chart, the CPI data is quite stable as it only fluctuate between 93-94 which determine a stable economy with low inflation rate.
+
+The Consumer Confidence Index measures how optimistic consumer are at the time. It is suggested that the more confident consumers feel about their finance, they are more likely to apply for bank loan. However, as seen from the graph consumers with higher CCI do not show higher pattern of taking up term deposit. Instead, there are certain number of consumers age under 60 who refused to take up loan.
+
+7. Regression model analysis
+
+7.1. Data preparation
+
+```{r}
+# Duration factor is filtered out because it does not make sense to have 0 duration (e.g., if duration=0 then y='no'):
+df$duration <- NULL
+```
+
+
+```{r}
+# pdays: number of days that passed by after the client was last contacted from a previous campaign (numeric; 999 means client was not previously contacted)
+# Since 999 is an arbitrary dummy variable, we should make it NA:
+df$pdays[df$pdays == 999] <- NA
+
+# Since the vast majority of the data points are NA now, we will discard this column:
+df$pdays <- NULL
+# We also drop column education as it is insignificant:
+df$education <- NULL
+```
+
+
+```{r}
+# Run the initial linear regression model:
+library(readxl)
+regmodel <- lm(y ~ ., data=df)
+summary(regmodel)
+```
+Explain the linear regression model:
+
+The regression model above have R-squared value of 0.2132, which means the model explains 21.32% of the total variability in the dependent variable y.
+It is clear that the model explains a small proportion of the total uncertainty in house price so it is not a fit model. Therefore we will run another regression model - the logistics regression.
+
+```{r}
+# Factor the dependent variable:
+df$y <- as.factor(df$y)
+
+# Check the dataset
+glimpse(df)
+
+# Create train dataset and test dataset:
+library(caret)
+set.seed(101)
+inTrain <- createDataPartition(df$y, times = 1, p = 0.8, list = FALSE)
+train <- df[inTrain, ]
+test <- df[-inTrain, ]
+
+# Run the logistic regression model:
+logistic = glm(y ~ .,
+               data = train,
+               family = "binomial"(link="logit"))
+
+# Result:
+summary(logistic)
+
+probs <- predict(logistic, data=train, type="response")
+head(probs)
+
+```
+First, we can see that variables with p-value smaller than 0.05 are statistically significant predictors, which means it would have impact on whether people choose to subscribe to the bank term deposit or not. Variables that have the lower p-value suggesting a strong association with the dependent variable y.
+
+We can see that older age, higer education, contact over cellphone, and previous contact all seem to be highly predictive and positively correlated with a ‘yes’.
+
+We also see thats jobs do not seem to have a significant impact. Similiary our socio-economics indicators do not turn out to be significant expect for nr.empolyed.
+
+```{r}
+# Run the logistic regression model only with significant variables:
+logistic_2 = glm(y ~ contact + month + poutcome + emp.var.rate + cons.price.idx + cons.conf.idx + nr.employed ,
+               data = train,
+               family = "binomial"(link="logit"))
+
+# Result:
+summary(logistic_2)
+
+```
+We use the anova() function to compare which model is better. Let’s say our null hypothesis is that second model is better than the first model. p < 0.05 would reject our hypothesis and in case p > 0.05, we’ll fail to reject the null hypothesis.
+
+```{r}
+anova(logistic, logistic_2, test="Chisq")
+```
+With p < 0.05, this ANOVA test also corroborates the fact that the first model is better at prediction than our second model.
+
+MODEL PREDICTION:
+
+```{r}
+pred.train <- predict(logistic,test)
+
+pred.train <- ifelse(pred.train > 0.5,1,0)
+
+# Mean of the true prediction 
+mean(pred.train == test$y)
+
+t1 <- table(pred.train,test$y)
+
+# Presicion and recall of the model
+presicion <- t1[1,1]/(sum(t1[1,]))
+recall <- t1[1,1]/(sum(t1[,1]))
+presicion
+recall
+```
+
+The F1 score (also F-score or F-measure) is a measure of a test’s accuracy. We will calcualte F1 score to see the model accuracy.
+
+```{r}
+F1<- 2*presicion*recall/(presicion+recall)
+F1
+```
+GRAPHING THE PREDICTED PROBABILITY:
+```{r}
+predicted_data <- data.frame(y_probability = logistic$fitted.values, y=train$y)
+
+predicted_data <- predicted_data[order(predicted_data$y_probability, decreasing=FALSE),]
+predicted_data$rank <- 1:nrow(predicted_data)
+```
+
+```{r}
+library(cowplot)
+ggplot(data=predicted_data, aes(x=rank, y=y_probability)) + geom_point(aes(color=as.factor(y)), alpha=1, shape=4, stroke=2) + xlab("Index") + ylab("Predicted probability of people subscribing bank term deposit")
+```
+
+```{r}
+
+```
