@@ -21,7 +21,7 @@ Language used: R
 
 [R Markedown](https://rpubs.com/antran28/934326)
 
-## ✨ Result summary
+## ✨ Result summary:
 
 - Potentially similar micro-targeting will increase the overall effectiveness of the entire marketing company.
 - Take into account the time of the company (May is the most effective)
