@@ -2,7 +2,7 @@
 
 ![bank marketing](https://user-images.githubusercontent.com/102011433/186786902-c2cc3645-60fe-4258-98ae-60b62e0b629b.jpg)
 
-## ✨ Introduction
+## ✨ Introduction:
 
 The following project focus on the analysis of a dataset 'Bank Marketing' which contains data about the direct marketing campaigns of a Portuguese banking institution. The goal of this project is to find ways to look for future strategies in order to improve future marketing campaigns for the bank.
 
@@ -17,7 +17,7 @@ The project is structured as follows:
 
 Language used: R
 
-## ✨ View my code here
+## ✨ View my code here:
 
 [R Markedown](https://rpubs.com/antran28/934326)
 
